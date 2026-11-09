@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 public class Imitation {
     public static void main(String[] args){
         char[]rotor1 = {'e','l','w','m','h','a','s','n','o','i','x','y','b','r','z','q','d','c','v','g','t','f','k','p','u','j'};
@@ -17,6 +19,19 @@ public class Imitation {
         // Test for Decode Car
         System.out.println("Decode Car for a is " + decodeCar(rotor1, rotor2, reflec, 'a'));
         System.out.println("Decode Car for h is " + decodeCar(rotor1, rotor2, reflec, 'h'));
+
+        // Test for Decode Message
+        System.out.println("The hidden message is : " + decodeMsgQuestionB("ugdxl avtgvl ov bheh qhg lvkhxzv evgl sh ovtixvkv hzzvv zdtl vkkvzv", rotor1, rotor2, reflec));
+
+        // Test for Decaler
+        char[] t = {'a','b','c','d'};
+        System.out.println(Arrays.toString(t));
+        decaler(t);
+        System.out.println(Arrays.toString(t));
+
+        // Test for Decode Message Question D
+        System.out.println("The hidden message is : " + decodeMsgQuestionD("ypoyarhcmsejvud nfs zpl isw uvssacwvv", rotor1, rotor2, reflec));
+
     }
 
     /*
@@ -57,9 +72,12 @@ public class Imitation {
 
     /*
     decodeCar qui étant donné les 3 tableaux et un caractère, renvoie le caractère associé. Utilisez
-    les fonctions précédentes. Par exemple, avec 'a', la fonction doit renvoyer 'h' (de 'a' à 'e'
-    par le rotor 1, de 'e' à 'l' par le rotor 2, de 'l' à 'j' par le déflecteur, de 'j' à 'n' par le
-    rotor 2 inversé et de 'n' à 'h' par le rotor 1 inversé). Testez votre programme et vérifiez que
+    les fonctions précédentes. Par exemple, avec 'a', la fonction doit renvoyer 'h' (
+    1- de 'a' à 'e' par le rotor 1,
+    2- de 'e' à 'l' par le rotor 2,
+    3- de 'l' à 'j' par le déflecteur,
+    4- de 'j' à 'n' par le rotor 2 inversé
+    5- et de 'n' à 'h' par le rotor 1 inversé). Testez votre programme et vérifiez que
     decodeCar('a') renvoie bien 'h' et que decodeCar('h') renvoie bien 'a'. Si ce n'est pas le cas,
     faites des affichages intermédiaires pour isoler le dysfonctionnement
     char[]rotor1 = {'e','l','w','m','h','a','s','n','o','i','x','y','b','r','z','q','d','c','v','g','t','f','k','p','u','j'};
@@ -89,5 +107,78 @@ public class Imitation {
 
         return step5;
 
+    }
+
+    /**
+     * Écrire la fonction decodeMsg pour décoder, caractère par caractère, une chaîne. Si un caractère est
+     * un espace, ne le décodez pas, recopiez-le tel quel dans la chaîne résultat. Utilisez votre programme pour
+     * décoder le message :
+     *
+     */
+    public static String decodeMsgQuestionB(String stringToDecode, char[] rotor1, char[] rotor2, char[] reflec){
+        String result = "";
+
+        for(int i = 0; i < stringToDecode.length(); i++){
+            if(stringToDecode.charAt(i) == ' '){
+                result += ' ';
+            } else {
+                result += decodeCar(rotor1, rotor2, reflec, stringToDecode.charAt(i));
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Écrire l'action decaler qui, étant donné un tableau de caractères, décale ses éléments d'un cran vers le
+     * début, le premier élément étant affecté à la dernière case du tableau. Attention à l'ordre dans lequel
+     * vous faites ces opérations. Testez cette action. Pour cela, vous pouvez afficher le contenu d'un tableau
+     * en écrivant votre propre action ou en utilisant la fonction Arrays.toString (en ayant ajouté import
+     * java.util.Arrays; au début du programme). Voici une façon de tester votre action decaler :
+     * char[] t = {'a','b','c','d'};
+     * System.out.println(Arrays.toString(t));
+     * decaler(t);
+     * System.out.println(Arrays.toString(t))
+     */
+
+    public static void decaler(char[] arrayOfCharacters){
+        // We copy the first letter and keep it aside
+        char firstCharacter = arrayOfCharacters[0];
+
+        // for the next letters, we are going to move them by one index
+        for(int i = 1; i < arrayOfCharacters.length; i++){
+            arrayOfCharacters[i - 1] = arrayOfCharacters[i];
+        }
+
+        // We paste the stored letter into the last place
+        arrayOfCharacters[arrayOfCharacters.length - 1] = firstCharacter;
+    }
+
+    /**
+     *  Lorsque le rotor 1 a fait un tour complet, il décale d'un cran le rotor 2, comme dans un compteur
+     * kilométrique de voiture. Modifier la fonction decodeMsg pour prendre en compte ces décalages.
+     * Vous devriez alors pouvoir décoder ce message :
+     * ypoyarhcmsejvud nfs zpl isw uvssacwvv
+     */
+    public static String decodeMsgQuestionD(String stringToDecode, char[] rotor1, char[] rotor2, char[] reflec){
+
+        String result = "";
+        int decalageCount = 0;
+
+        for(int i = 0; i < stringToDecode.length(); i++){
+            if(stringToDecode.charAt(i) == ' ')
+                result += ' ';
+            else
+                result += decodeCar(rotor1, rotor2, reflec, stringToDecode.charAt(i));
+
+            decaler(rotor1);
+            decalageCount++;
+
+            if(decalageCount == rotor1.length){
+                decaler(rotor2);
+                decalageCount = 0;
+            }
+        }
+        return result;
     }
 }
